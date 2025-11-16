@@ -1,0 +1,3 @@
+// This is a base64 encoded SVG that closely resembles the default user icon provided.
+// Using SVG ensures it's lightweight and scales perfectly.
+export const defaultPfpUrl = 'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNTEyIDUxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgZmlsbD0iI2NlZDJkNiIvPjxnPiA8Y2lyY2xlIGN4PSIyNTYiIGN5PSIxOTIiIHI9Ijk2IiBmaWxsPSIjNzI3ZDg3Ii8+IDxwYXRoIGQ9Ik0yNTYgMzIwYy04OC4yIDAtMTYwIDU4LjgtMTYwIDEzMC44VjUxMmgzMjBWNDUwLjhDNDE2IDM3OC44IDM0NC4yIDMyMCAyNTYgMzIweiIgZmlsbD0iIzcyN2Q4NyIvPiA8L2c+PC9zdmc+';
