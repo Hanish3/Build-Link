@@ -1,18 +1,37 @@
 
+
 import { GoogleGenAI, Modality } from "@google/genai";
 
 const API_KEY = process.env.API_KEY;
 
-if (!API_KEY) {
-  throw new Error("API_KEY environment variable not set. Please provide a valid API key for the app to function.");
+// Initialize ai as null
+let ai: GoogleGenAI | null = null;
+
+// Only create an instance if the API key is provided
+if (API_KEY) {
+  try {
+    ai = new GoogleGenAI({ apiKey: API_KEY });
+  } catch (error) {
+    console.error("Failed to initialize GoogleGenAI:", error);
+  }
+} else {
+    console.warn("API_KEY environment variable not set. AI features will be disabled.");
 }
 
-const ai = new GoogleGenAI({ apiKey: API_KEY });
+/**
+ * Checks if the AI service is available and configured.
+ */
+export const isAiAvailable = (): boolean => !!ai;
+
+const AI_UNAVAILABLE_ERROR_MESSAGE = "AI service is not configured. Please ensure the API_KEY is set correctly in your environment variables.";
 
 /**
  * Sends a text message to a specified Gemini model.
  */
 export const sendMessage = async (prompt: string, modelName: string): Promise<string> => {
+  if (!ai) {
+    return AI_UNAVAILABLE_ERROR_MESSAGE;
+  }
   try {
     const response = await ai.models.generateContent({
       model: modelName,
@@ -29,6 +48,9 @@ export const sendMessage = async (prompt: string, modelName: string): Promise<st
  * Edits an image using a text prompt with Gemini 2.5 Flash Image.
  */
 export const editImageWithAI = async (prompt: string, image: { data: string, mimeType: string }): Promise<string> => {
+  if (!ai) {
+    throw new Error(AI_UNAVAILABLE_ERROR_MESSAGE);
+  }
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash-image',
@@ -67,6 +89,9 @@ export const editImageWithAI = async (prompt: string, image: { data: string, mim
  * Generates an image from a text prompt using Imagen.
  */
 export const generateImageWithAI = async (prompt: string): Promise<string | null> => {
+  if (!ai) {
+    throw new Error(AI_UNAVAILABLE_ERROR_MESSAGE);
+  }
   try {
     const response = await ai.models.generateImages({
       model: 'imagen-4.0-generate-001',

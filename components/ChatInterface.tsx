@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { sendMessage } from '../services/geminiService';
+import { sendMessage, isAiAvailable } from '../services/geminiService';
 import { ChatMessage } from '../types';
 import { PaperAirplaneIcon, SparklesIcon, UserIcon } from './icons';
 
@@ -9,6 +9,7 @@ const ChatInterface: React.FC = () => {
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [aiReady] = useState(() => isAiAvailable());
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -85,11 +86,11 @@ const ChatInterface: React.FC = () => {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-            placeholder="Ask Archigen AI..."
+            placeholder={aiReady ? "Ask Archigen AI..." : "AI not available. Please set API_KEY."}
             className="w-full bg-transparent p-3 focus:outline-none text-white ring-1 ring-inset ring-transparent focus:ring-brand-gold rounded-lg"
-            disabled={isLoading}
+            disabled={isLoading || !aiReady}
           />
-          <button onClick={handleSend} disabled={isLoading} className="p-3 text-slate-400 hover:text-brand-gold disabled:text-slate-600 transition-colors">
+          <button onClick={handleSend} disabled={isLoading || !aiReady} className="p-3 text-slate-400 hover:text-brand-gold disabled:text-slate-600 transition-colors">
             <PaperAirplaneIcon className="w-6 h-6" />
           </button>
         </div>

@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { generateImageWithAI } from '../services/geminiService';
+import { generateImageWithAI, isAiAvailable } from '../services/geminiService';
 import { ArrowPathIcon, ImageIcon, WandSparklesIcon } from './icons';
 
 const ImageGenerator: React.FC = () => {
@@ -7,6 +7,7 @@ const ImageGenerator: React.FC = () => {
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [aiReady] = useState(() => isAiAvailable());
 
   const processGeneration = useCallback(async () => {
     if (!prompt) {
@@ -23,8 +24,8 @@ const ImageGenerator: React.FC = () => {
       } else {
         throw new Error("Received no image data");
       }
-    } catch (err) {
-      setError('Failed to generate image. The model might be unavailable. Please try again later.');
+    } catch (err: any) {
+      setError(err.message || 'Failed to generate image. The model might be unavailable. Please try again later.');
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -35,7 +36,14 @@ const ImageGenerator: React.FC = () => {
 
 
   return (
-    <div className="bg-brand-blue-dark/50 backdrop-blur-lg border border-brand-blue-light rounded-xl shadow-2xl p-6 h-full flex flex-col">
+    <div className="bg-brand-blue-dark/50 backdrop-blur-lg border border-brand-blue-light rounded-xl shadow-2xl p-6 h-full flex flex-col relative">
+       {!aiReady && (
+        <div className="absolute inset-0 bg-brand-blue-dark/90 flex flex-col items-center justify-center rounded-xl z-10 p-4">
+            <ImageIcon className="w-16 h-16 text-amber-500/50 mb-4" />
+            <h3 className="text-xl font-jura font-bold text-amber-400 text-center">AI Generator Unavailable</h3>
+            <p className="text-slate-400 text-center mt-2">To use this feature, please set the <code className="bg-brand-blue-dark p-1 rounded">API_KEY</code> environment variable and redeploy the application.</p>
+        </div>
+      )}
       <div className="flex items-center gap-2 mb-4">
         <ImageIcon className="w-6 h-6 text-brand-gold" />
         <h3 className="text-xl font-jura text-white">AI Image Generator</h3>
